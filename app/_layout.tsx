@@ -10,6 +10,23 @@ import { ActivityIndicator, View } from 'react-native';
 import { GestureHandlerRootView } from 'react-native-gesture-handler';
 import 'react-native-reanimated';
 import { SafeAreaProvider } from 'react-native-safe-area-context';
+import { AuthProvider, useAuth } from '../context/AuthContext';
+
+function AppStack() {
+  const { loading } = useAuth();
+
+  if (loading) {
+    return (
+      <View style={{ flex: 1, backgroundColor: '#2D211C', alignItems: 'center', justifyContent: 'center' }}>
+        <ActivityIndicator color="#FAD7A1" />
+      </View>
+    );
+  }
+
+  return (
+    <Stack screenOptions={{ headerShown: false }} />
+  );
+}
 
 export default function RootLayout() {
   const [loaded] = useFonts({
@@ -20,14 +37,7 @@ export default function RootLayout() {
 
   if (!loaded) {
     return (
-      <View
-        style={{
-          flex: 1,
-          backgroundColor: '#2D211C',
-          alignItems: 'center',
-          justifyContent: 'center',
-        }}
-      >
+      <View style={{ flex: 1, backgroundColor: '#2D211C', alignItems: 'center', justifyContent: 'center' }}>
         <ActivityIndicator color="#FAD7A1" />
       </View>
     );
@@ -36,13 +46,9 @@ export default function RootLayout() {
   return (
     <SafeAreaProvider>
       <GestureHandlerRootView style={{ flex: 1 }}>
-        <Stack
-          initialRouteName="index"
-          screenOptions={{
-            headerShown: false,
-            animation: 'slide_from_right',
-          }}
-        />
+        <AuthProvider>
+          <AppStack />
+        </AuthProvider>
       </GestureHandlerRootView>
     </SafeAreaProvider>
   );

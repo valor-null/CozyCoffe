@@ -1,8 +1,10 @@
-// app/cadastro.tsx
 import { useRouter } from 'expo-router';
+import { createUserWithEmailAndPassword, updateProfile } from 'firebase/auth';
+import { doc, setDoc } from 'firebase/firestore';
 import { AnimatePresence, MotiView } from 'moti';
 import React, { useState } from 'react';
-import { Image, StyleSheet, Text, TextInput, TouchableOpacity, View } from 'react-native';
+import { Alert, Image, StyleSheet, Text, TextInput, TouchableOpacity, View } from 'react-native';
+import { auth, db } from '../context/firebaseConfig';
 import { colors, fonts } from '../context/style';
 
 export default function Cadastro() {
@@ -12,10 +14,46 @@ export default function Cadastro() {
   const [nome, setNome] = useState('');
   const [email, setEmail] = useState('');
   const [senha, setSenha] = useState('');
+  const [loading, setLoading] = useState(false);
 
   function handleAvatarSelect(a: 'girl' | 'boy') {
     setAvatar(a);
     setStep(2);
+  }
+
+  async function handleCadastro() {
+    if (!avatar) {
+      Alert.alert('Escolha o avatar', 'Selecione girl ou boy primeiro.');
+      return;
+    }
+    if (!nome.trim() || !email.trim() || !senha.trim()) {
+      Alert.alert('Campos obrigatórios', 'Preencha nome, e-mail e senha.');
+      return;
+    }
+
+    try {
+      setLoading(true);
+
+      const cred = await createUserWithEmailAndPassword(auth, email.trim(), senha.trim());
+
+      setLoading(false);
+      router.replace('/home');
+
+      updateProfile(cred.user, {
+        displayName: nome.trim(),
+        photoURL: avatar,
+      }).catch(() => {});
+
+      setDoc(doc(db, 'users', cred.user.uid), {
+        name: nome.trim(),
+        email: email.trim(),
+        avatar,
+        createdAt: Date.now(),
+      }).catch(() => {});
+    } catch (error: any) {
+      setLoading(false);
+      Alert.alert('Erro ao cadastrar', error.message ?? 'Tente novamente.');
+    }
   }
 
   return (
@@ -100,15 +138,15 @@ export default function Cadastro() {
                 secureTextEntry
               />
 
-              <TouchableOpacity style={styles.loginButton} onPress={() => router.replace('/home')}>
-                <Text style={styles.loginButtonText}>Acessar</Text>
+              <TouchableOpacity style={styles.loginButton} onPress={handleCadastro} disabled={loading}>
+                <Text style={styles.loginButtonText}>{loading ? 'Criando...' : 'Acessar'}</Text>
               </TouchableOpacity>
             </View>
 
             <TouchableOpacity onPress={() => setStep(1)} style={styles.switchAvatar}>
               <Text style={styles.switchAvatarText}>
                 Trocar ícone
-                {avatar ? avatar === 'girl' ? ' (atual: menina)' : ' (atual: menino)' : ''}
+                {avatar ? (avatar === 'girl' ? ' (atual: menina)' : ' (atual: menino)') : ''}
               </Text>
             </TouchableOpacity>
 

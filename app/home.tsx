@@ -1,18 +1,59 @@
 import { useRouter } from 'expo-router';
+import { signOut } from 'firebase/auth';
+import { doc, getDoc } from 'firebase/firestore';
 import { MotiView } from 'moti';
-import React from 'react';
+import React, { useEffect, useState } from 'react';
 import { Dimensions, Image, StyleSheet, Text, TouchableOpacity, View } from 'react-native';
+import { useAuth } from '../context/AuthContext';
+import { auth, db } from '../context/firebaseConfig';
 import { colors, fonts } from '../context/style';
 
 const { width } = Dimensions.get('window');
 const CARD_WIDTH = width * 0.85;
+const CARD_COLOR = '#B8835C';
 
 export default function HomePage() {
   const router = useRouter();
-  const userName = 'NOME DO USUARIO';
+  const { user } = useAuth();
+  const [name, setName] = useState(user?.displayName || '');
+  const [avatarKey, setAvatarKey] = useState(user?.photoURL || 'girl');
+
+  useEffect(() => {
+    if (!user?.uid) return;
+    (async () => {
+      try {
+        const snap = await getDoc(doc(db, 'users', user.uid));
+        if (snap.exists()) {
+          const data = snap.data() as any;
+          if (data.name) setName(data.name);
+          if (data.avatar) setAvatarKey(data.avatar);
+        } else {
+          if (user.displayName) setName(user.displayName);
+        }
+      } catch (e) {
+        if (!name) {
+          setName(user.displayName || 'NOME DO USUARIO');
+        }
+      }
+    })();
+  }, [user]);
+
+  const avatarSource =
+    avatarKey === 'boy'
+      ? require('../assets/images/boy.png')
+      : require('../assets/images/girl.png');
+
+  async function handleLogout() {
+    await signOut(auth);
+    router.replace('/');
+  }
 
   return (
     <View style={styles.container}>
+      <TouchableOpacity style={styles.logoutBtn} onPress={handleLogout}>
+        <Text style={styles.logoutText}>Sair</Text>
+      </TouchableOpacity>
+
       <View style={styles.content}>
         <MotiView
           from={{ opacity: 0, translateY: -12 }}
@@ -22,12 +63,12 @@ export default function HomePage() {
         >
           <View style={styles.avatarCircle}>
             <Image
-              source={require('../assets/images/girl.png')}
+              source={avatarSource}
               style={styles.avatarImage}
               resizeMode="contain"
             />
           </View>
-          <Text style={styles.userName}>{userName}</Text>
+          <Text style={styles.userName}>{name || 'NOME DO USUARIO'}</Text>
         </MotiView>
 
         <MotiView
@@ -91,12 +132,25 @@ export default function HomePage() {
   );
 }
 
-const CARD_COLOR = '#B8835C';
-
 const styles = StyleSheet.create({
   container: {
     flex: 1,
     backgroundColor: colors.background,
+  },
+  logoutBtn: {
+    position: 'absolute',
+    top: 40,
+    right: 22,
+    zIndex: 10,
+    backgroundColor: 'rgba(0,0,0,0.22)',
+    paddingHorizontal: 14,
+    paddingVertical: 6,
+    borderRadius: 18,
+  },
+  logoutText: {
+    color: '#fff',
+    fontFamily: fonts.bold,
+    fontSize: 13,
   },
   content: {
     flex: 1,
@@ -174,6 +228,6 @@ const styles = StyleSheet.create({
     fontFamily: fonts.bold,
     fontSize: 24,
     lineHeight: 26,
-    textAlign: "center"
+    textAlign: 'center',
   },
 });

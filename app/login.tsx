@@ -1,7 +1,9 @@
 import { useRouter } from 'expo-router';
+import { signInWithEmailAndPassword } from 'firebase/auth';
 import { MotiView } from 'moti';
 import React, { useState } from 'react';
 import {
+  Alert,
   KeyboardAvoidingView,
   Platform,
   StyleSheet,
@@ -10,12 +12,35 @@ import {
   TouchableOpacity,
   View,
 } from 'react-native';
+import { auth } from '../context/firebaseConfig';
 import { colors, fonts } from '../context/style';
 
 export default function Login() {
   const router = useRouter();
   const [email, setEmail] = useState('');
   const [senha, setSenha] = useState('');
+  const [loading, setLoading] = useState(false);
+
+  async function handleLogin() {
+    if (!email.trim() || !senha.trim()) {
+      Alert.alert('Campos obrigatórios', 'Preencha e-mail e senha.');
+      return;
+    }
+
+    try {
+      setLoading(true);
+      await signInWithEmailAndPassword(auth, email.trim(), senha.trim());
+      router.replace('/home');
+    } catch (error: any) {
+      let msg = 'Não foi possível entrar.';
+      if (error.code === 'auth/user-not-found') msg = 'Usuário não encontrado.';
+      if (error.code === 'auth/wrong-password' || error.code === 'auth/invalid-credential')
+        msg = 'E-mail ou senha inválidos.';
+      Alert.alert('Erro', msg);
+    } finally {
+      setLoading(false);
+    }
+  }
 
   return (
     <KeyboardAvoidingView
@@ -60,8 +85,8 @@ export default function Login() {
             secureTextEntry
           />
 
-          <TouchableOpacity style={styles.loginButton} onPress={() => router.replace('/')}>
-            <Text style={styles.loginButtonText}>Entrar</Text>
+          <TouchableOpacity style={styles.loginButton} onPress={handleLogin} disabled={loading}>
+            <Text style={styles.loginButtonText}>{loading ? 'Entrando...' : 'Entrar'}</Text>
           </TouchableOpacity>
         </MotiView>
 
