@@ -1,4 +1,5 @@
 import { StyleSheet, Text, View } from 'react-native';
+import { colors, fonts } from '../context/style';
 
 export default function Cadastro() {
   return (
@@ -11,13 +12,13 @@ export default function Cadastro() {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    backgroundColor: '#2D211C',
+    backgroundColor: colors.background,
     alignItems: 'center',
     justifyContent: 'center',
   },
   text: {
-    color: '#FDE9C9',
+    color: colors.textLight,
     fontSize: 28,
-    fontWeight: '700',
+    fontFamily: fonts.bold,
   },
 });
