@@ -100,7 +100,7 @@ export default function Cadastro() {
                 secureTextEntry
               />
 
-              <TouchableOpacity style={styles.loginButton} onPress={() => router.replace('/')}>
+              <TouchableOpacity style={styles.loginButton} onPress={() => router.replace('/home')}>
                 <Text style={styles.loginButtonText}>Acessar</Text>
               </TouchableOpacity>
             </View>

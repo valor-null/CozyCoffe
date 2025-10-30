@@ -35,16 +35,14 @@ export default function RootLayout() {
 
   return (
     <SafeAreaProvider>
-      <GestureHandlerRootView>
-        <View style={{ flex: 1 }}>
-          <Stack
-            initialRouteName="index"
-            screenOptions={{
-              headerShown: false,
-              animation: 'slide_from_right',
-            }}
-          />
-        </View>
+      <GestureHandlerRootView style={{ flex: 1 }}>
+        <Stack
+          initialRouteName="index"
+          screenOptions={{
+            headerShown: false,
+            animation: 'slide_from_right',
+          }}
+        />
       </GestureHandlerRootView>
     </SafeAreaProvider>
   );
