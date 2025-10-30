@@ -1,24 +1,34 @@
-import { DarkTheme, DefaultTheme, ThemeProvider } from '@react-navigation/native';
+import {
+  Baloo2_400Regular,
+  Baloo2_500Medium,
+  Baloo2_600SemiBold,
+  useFonts,
+} from '@expo-google-fonts/baloo-2';
 import { Stack } from 'expo-router';
-import { StatusBar } from 'expo-status-bar';
-import 'react-native-reanimated';
-
-import { useColorScheme } from '@/hooks/use-color-scheme';
-
-export const unstable_settings = {
-  anchor: '(tabs)',
-};
+import { ActivityIndicator, View } from 'react-native';
+import { GestureHandlerRootView } from 'react-native-gesture-handler';
+import { SafeAreaProvider } from 'react-native-safe-area-context';
 
 export default function RootLayout() {
-  const colorScheme = useColorScheme();
+  const [loaded] = useFonts({
+    Baloo2_400Regular,
+    Baloo2_500Medium,
+    Baloo2_600SemiBold,
+  });
+
+  if (!loaded) {
+    return (
+      <View style={{ flex: 1, backgroundColor: '#2D211C', alignItems: 'center', justifyContent: 'center' }}>
+        <ActivityIndicator color="#FAD7A1" />
+      </View>
+    );
+  }
 
   return (
-    <ThemeProvider value={colorScheme === 'dark' ? DarkTheme : DefaultTheme}>
-      <Stack>
-        <Stack.Screen name="(tabs)" options={{ headerShown: false }} />
-        <Stack.Screen name="modal" options={{ presentation: 'modal', title: 'Modal' }} />
-      </Stack>
-      <StatusBar style="auto" />
-    </ThemeProvider>
+    <SafeAreaProvider>
+      <GestureHandlerRootView style={{ flex: 1 }}>
+        <Stack screenOptions={{ headerShown: false, animation: 'slide_from_right' }} />
+      </GestureHandlerRootView>
+    </SafeAreaProvider>
   );
 }

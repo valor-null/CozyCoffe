@@ -1,10 +1,9 @@
 import { StyleSheet, Text, View } from 'react-native';
-import { colors, fonts } from '../context/style';
 
-export default function ModalScreen() {
+export default function Login() {
   return (
     <View style={styles.container}>
-      <Text style={styles.text}>Modal</Text>
+      <Text style={styles.text}>Login</Text>
     </View>
   );
 }
@@ -12,13 +11,13 @@ export default function ModalScreen() {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    backgroundColor: colors.background,
+    backgroundColor: '#2D211C',
     alignItems: 'center',
     justifyContent: 'center',
   },
   text: {
-    color: colors.textLight,
-    fontFamily: fonts.bold,
-    fontSize: 20,
+    color: '#FDE9C9',
+    fontSize: 28,
+    fontWeight: '700',
   },
 });
