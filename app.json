@@ -5,9 +5,9 @@
     "version": "1.0.0",
     "orientation": "portrait",
     "scheme": "cozycoffe",
-    "icon": "./assets/images/logo.png",
+    "icon": "./assets/images/splash.png",
     "splash": {
-      "image": "./assets/images/logo.png",
+      "image": "./assets/images/splash.png",
       "resizeMode": "contain",
       "backgroundColor": "#ffffff"
     },
