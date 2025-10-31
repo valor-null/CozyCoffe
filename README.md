@@ -1,6 +1,10 @@
 # CozyCoffe ☕️
 
-### Aplicativo mobile feito em **React Native + Expo** para listar cafés e lanches de forma simples e animada.  
+
+Aplicativo mobile feito em **React Native + Expo** para listar cafés e lanches de forma simples e animada.  
+
+video: https://www.youtube.com/watch?v=08dTb_tqv0Q
+
 ---
 
 ## ✨ Introdução
