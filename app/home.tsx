@@ -25,15 +25,13 @@ export default function HomePage() {
         const snap = await getDoc(doc(db, 'users', user.uid));
         if (snap.exists()) {
           const data = snap.data() as any;
-          if (data.name) setName(data.name);
+          setName(data.name || user.displayName || 'NOME DO USUARIO');
           if (data.avatar) setAvatarKey(data.avatar);
         } else {
-          if (user.displayName) setName(user.displayName);
-        }
-      } catch (e) {
-        if (!name) {
           setName(user.displayName || 'NOME DO USUARIO');
         }
+      } catch (e) {
+        setName(user?.displayName || 'NOME DO USUARIO');
       }
     })();
   }, [user]);

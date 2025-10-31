@@ -6,10 +6,12 @@ import {
 } from '@expo-google-fonts/baloo-bhai-2';
 import { Stack } from 'expo-router';
 import React from 'react';
-import { ActivityIndicator, View } from 'react-native';
 import { GestureHandlerRootView } from 'react-native-gesture-handler';
 import { SafeAreaProvider } from 'react-native-safe-area-context';
 import { AuthProvider, useAuth } from '../context/AuthContext';
+import { colors } from '../context/style';
+
+const APP_BG = colors.background ?? '#2D211C';
 
 function AppStack() {
   const { user } = useAuth();
@@ -18,8 +20,32 @@ function AppStack() {
     <Stack
       key={user ? 'auth' : 'guest'}
       initialRouteName={user ? 'home' : 'index'}
-      screenOptions={{ headerShown: false }}
-    />
+      screenOptions={{
+        headerShown: false,
+        animation: 'slide_from_right',
+        contentStyle: { backgroundColor: APP_BG },
+      }}
+    >
+      <Stack.Screen name="index" />
+      <Stack.Screen name="login" />
+      <Stack.Screen name="cadastro" />
+      <Stack.Screen name="home" />
+
+      <Stack.Screen
+        name="coffe"
+        options={{
+          animation: 'fade',
+          contentStyle: { backgroundColor: APP_BG },
+        }}
+      />
+      <Stack.Screen
+        name="brunch"
+        options={{
+          animation: 'fade',
+          contentStyle: { backgroundColor: APP_BG },
+        }}
+      />
+    </Stack>
   );
 }
 
@@ -30,24 +56,9 @@ export default function RootLayout() {
     BalooBhai2_600SemiBold,
   });
 
-  if (!loaded) {
-    return (
-      <View
-        style={{
-          flex: 1,
-          backgroundColor: '#2D211C',
-          alignItems: 'center',
-          justifyContent: 'center',
-        }}
-      >
-        <ActivityIndicator color="#FAD7A4" />
-      </View>
-    );
-  }
-
   return (
-    <GestureHandlerRootView style={{ flex: 1 }}>
-      <SafeAreaProvider>
+    <GestureHandlerRootView style={{ flex: 1, backgroundColor: APP_BG }}>
+      <SafeAreaProvider style={{ flex: 1, backgroundColor: APP_BG }}>
         <AuthProvider>
           <AppStack />
         </AuthProvider>
